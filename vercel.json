@@ -1,5 +1,8 @@
 {
   "cleanUrls": true,
+  "redirects": [
+    { "source": "/", "destination": "/influenzar", "permanent": false }
+  ],
   "rewrites": [
     { "source": "/influenzar", "destination": "/influenzar.html" },
     { "source": "/register", "destination": "/register.html" },
