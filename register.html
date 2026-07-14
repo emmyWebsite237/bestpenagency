@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Create Your Account - Bestpen Influenzar</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="auth-shell">
+
+  <div class="auth-side">
+    <div class="auth-side-content">
+      <div class="brand" style="color:#fff;margin-bottom:40px;"><span class="brand-mark">B</span> Best Pen Agency</div>
+      <h2>Turn your network into income.</h2>
+      <p>Join Influenzar and start earning 10% commission on every business you refer to Bestpen — tracked in real time, paid within 72 hours.</p>
+      <div class="auth-stat-row">
+        <div class="auth-stat"><b>250+</b><span>Active referees</span></div>
+        <div class="auth-stat"><b>₦1.78M+</b><span>Paid out</span></div>
+        <div class="auth-stat"><b>72hrs</b><span>Avg. payout time</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-form-col">
+    <div class="auth-card fade-in">
+      <div class="brand"><span class="brand-mark">B</span> Best Pen Agency</div>
+      <h1>Create your account</h1>
+      <p class="sub">Get your referral code and start earning in minutes.</p>
+
+      <div id="banner" class="banner"></div>
+
+      <form id="register-form" novalidate>
+        <div class="field" id="field-name">
+          <label for="name">Full name</label>
+          <input type="text" id="name" placeholder="e.g. Daniel Okafor" autocomplete="name" required>
+          <div class="err-msg">Please enter your full name.</div>
+        </div>
+        <div class="field" id="field-email">
+          <label for="email">Email address</label>
+          <input type="email" id="email" placeholder="you@example.com" autocomplete="email" required>
+          <div class="err-msg">Please enter a valid email address.</div>
+        </div>
+        <div class="field" id="field-password">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="At least 6 characters" autocomplete="new-password" required>
+          <div class="hint">Use at least 6 characters.</div>
+          <div class="err-msg">Password must be at least 6 characters.</div>
+        </div>
+        <div class="field" id="field-confirm">
+          <label for="confirm">Confirm password</label>
+          <input type="password" id="confirm" placeholder="Re-enter your password" autocomplete="new-password" required>
+          <div class="err-msg">Passwords don't match.</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" id="submit-btn">Create account →</button>
+      </form>
+
+      <div id="success-panel" class="state-panel" style="display:none;">
+        <div class="state-icon">✉️</div>
+        <h2>Check your email</h2>
+        <p>We've sent a confirmation link to <b id="sent-email"></b>. Tap it to activate your account — you'll be brought right back here.</p>
+      </div>
+
+      <p class="auth-foot">Already have an account? <a href="/login" class="link-blue">Log in</a></p>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  const form = document.getElementById("register-form");
+  const banner = document.getElementById("banner");
+  const submitBtn = document.getElementById("submit-btn");
+
+  function clearErrors(){
+    ["name","email","password","confirm"].forEach(id=>{
+      document.getElementById(`field-${id}`).classList.remove("error");
+    });
+    hideBanner(banner);
+  }
+
+  function setError(id){
+    document.getElementById(`field-${id}`).classList.add("error");
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    clearErrors();
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const confirm = document.getElementById("confirm").value;
+
+    let hasError = false;
+    if (!name) { setError("name"); hasError = true; }
+    if (!email || !email.includes("@")) { setError("email"); hasError = true; }
+    if (!password || password.length < 6) { setError("password"); hasError = true; }
+    if (confirm !== password) { setError("confirm"); hasError = true; }
+    if (hasError) return;
+
+    submitBtn.disabled = true;
+    showLoader("Creating your account...");
+
+    try {
+      const { data, error } = await withMinDelay(registerUser({ name, email, password }));
+
+      if (error) {
+        hideLoader();
+        submitBtn.disabled = false;
+        showBanner(banner, error.message || "Something went wrong. Please try again.", "error");
+        return;
+      }
+
+      hideLoader();
+      form.style.display = "none";
+      document.getElementById("sent-email").textContent = email;
+      document.getElementById("success-panel").style.display = "block";
+    } catch (err) {
+      hideLoader();
+      submitBtn.disabled = false;
+      showBanner(banner, "Network error. Please check your connection and try again.", "error");
+    }
+  });
+</script>
+
+</body>
+</html>
