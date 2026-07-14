@@ -1011,10 +1011,43 @@ body{
         font-size:28px;
       }
     }
+
+    /* ---------- Page-transition loader ---------- */
+    .loader-overlay{
+      position:fixed;inset:0;
+      background:#020617;
+      display:flex;align-items:center;justify-content:center;
+      flex-direction:column;gap:20px;
+      z-index:9999;
+      opacity:0;pointer-events:none;
+      transition:opacity .35s ease;
+    }
+    .loader-overlay.show{opacity:1;pointer-events:all;}
+    .loader-ring{
+      width:46px;height:46px;border-radius:50%;
+      border:3px solid rgba(255,255,255,0.15);
+      border-top-color:var(--primary);
+      animation:spin .8s linear infinite;
+    }
+    .loader-text{color:#fff;font-size:14px;font-weight:500;}
+    .loader-bar{width:180px;height:3px;border-radius:3px;background:rgba(255,255,255,0.12);overflow:hidden;}
+    .loader-bar-fill{
+      height:100%;width:0%;border-radius:3px;
+      background:linear-gradient(90deg,var(--primary),#7C8CFF);
+      animation:loadfill 2s ease forwards;
+    }
+    @keyframes spin{to{transform:rotate(360deg);}}
+    @keyframes loadfill{0%{width:0%;}60%{width:75%;}100%{width:100%;}}
   </style>
 </head>
 
 <body>
+
+<div class="loader-overlay" id="pageLoader">
+  <div class="loader-ring"></div>
+  <div class="loader-text" id="loaderText">Loading...</div>
+  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+</div>
 
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -1028,8 +1061,8 @@ body{
   </ul>
 
   <div class="sidebar-footer">
-    <a href="/login" class="login">Log In</a>
-    <a href="/register" class="join-btn">Join Influenzar →</a>
+    <a href="/login" class="login" data-loading-text="Taking you to log in...">Log In</a>
+    <a href="/register" class="join-btn" data-loading-text="Taking you to sign up...">Join Influenzar →</a>
   </div>
 </nav>
 
@@ -1054,8 +1087,8 @@ body{
       </ul>
 
       <div class="nav-right">
-        <a href="/login" class="login">Log In</a>
-        <a href="/register" class="join-btn">Join Influenzar →</a>
+        <a href="/login" class="login" data-loading-text="Taking you to log in...">Log In</a>
+        <a href="/register" class="join-btn" data-loading-text="Taking you to sign up...">Join Influenzar →</a>
       </div>
 
       <button class="mobile-menu-btn" id="menuToggle" aria-label="Toggle Navigation">
@@ -1086,7 +1119,7 @@ body{
           </p>
 
           <div class="hero-buttons">
-            <a href="/register" class="btn-primary">
+            <a href="/register" class="btn-primary" data-loading-text="Taking you to sign up...">
               Get My Referral Code →
             </a>
 
@@ -1233,7 +1266,7 @@ body{
     </div>
 
     <div style="margin-top:40px;">
-      <a href="/register" class="btn-primary">
+      <a href="/register" class="btn-primary" data-loading-text="Taking you to sign up...">
         Start Referring Now →
       </a>
     </div>
@@ -1261,7 +1294,7 @@ body{
           The more you refer, the more you earn. There's no cap. No complicated tiers. Every business in your network that hires Bestpen puts money directly in your pocket — from the very first invoice they pay.
         </p>
 
-        <a href="/register" class="btn-primary">
+        <a href="/register" class="btn-primary" data-loading-text="Taking you to sign up...">
           View All Rewards →
         </a>
 
@@ -1351,7 +1384,7 @@ body{
         </p>
       </div>
 
-      <a href="/register" class="btn-primary">
+      <a href="/register" class="btn-primary" data-loading-text="Taking you to sign up...">
         Explore All Services →
       </a>
 
@@ -1492,7 +1525,7 @@ body{
 
         </ul>
 
-        <a href="/register" class="btn-primary">
+        <a href="/register" class="btn-primary" data-loading-text="Taking you to sign up...">
           Join & Start Tracking →
         </a>
 
@@ -1621,7 +1654,7 @@ body{
           See where you rank among Bestpen's top Influenzar partners. Every month, the top 3 earn cash bonuses on top of their commissions. The race resets monthly — and it's always open.
         </p>
 
-        <a href="/register" class="btn-primary">
+        <a href="/register" class="btn-primary" data-loading-text="Taking you to sign up...">
           View Full Leaderboard →
         </a>
 
@@ -1818,7 +1851,7 @@ body{
 
       </div>
 
-      <a href="/register" class="btn-primary" style="background:var(--yellow); color:#000;">
+      <a href="/register" class="btn-primary" data-loading-text="Taking you to sign up..." style="background:var(--yellow); color:#000;">
         Get My Referral Code →
       </a>
 
@@ -1934,6 +1967,33 @@ sidebarOverlay.addEventListener("click", () => {
   document.body.classList.remove("menu-open");
 });
 
+// ---- 2s loading transition for internal links (/login, /register, etc.) ----
+// Same-page "#" anchors and external links are left alone so they still jump instantly.
+const pageLoader = document.getElementById("pageLoader");
+const loaderText = document.getElementById("loaderText");
+
+document.querySelectorAll("a[href]").forEach((link) => {
+  const href = link.getAttribute("href");
+  if (
+    !href ||
+    href.startsWith("#") ||
+    href.startsWith("http") ||
+    href.startsWith("mailto:") ||
+    href.startsWith("tel:") ||
+    link.target === "_blank"
+  ) {
+    return;
+  }
+
+  link.addEventListener("click", (e) => {
+    e.preventDefault();
+    loaderText.textContent = link.getAttribute("data-loading-text") || "Loading...";
+    pageLoader.classList.add("show");
+    setTimeout(() => {
+      window.location.href = href;
+    }, 2000);
+  });
+});
 </script>
 
 </body>
