@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard - Bestpen Influenzar</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="dash-shell" id="dash-shell" style="display:none;">
+
+  <aside class="dash-sidebar">
+    <div class="brand"><span class="brand-mark">B</span> Bestpen</div>
+    <nav class="dash-nav">
+      <a href="/dashboard" class="dash-nav-item active"><span class="dash-nav-icon">▦</span> Overview</a>
+      <a href="#" class="dash-nav-item"><span class="dash-nav-icon">👤</span> Referrals</a>
+      <a href="#" class="dash-nav-item"><span class="dash-nav-icon">◎</span> Earnings</a>
+      <a href="#" class="dash-nav-item"><span class="dash-nav-icon">▭</span> Payouts</a>
+      <a href="#" class="dash-nav-item"><span class="dash-nav-icon">🏆</span> Leaderboard</a>
+      <a href="#" class="dash-nav-item"><span class="dash-nav-icon">🎁</span> Rewards</a>
+      <a href="#" class="dash-nav-item"><span class="dash-nav-icon">⚙</span> Settings</a>
+    </nav>
+    <button class="dash-logout" id="logout-btn"><span class="dash-nav-icon">⏻</span> Log out</button>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <h1 class="dash-welcome">Welcome back, <span id="user-name">—</span> 👋</h1>
+      <div class="dash-top-actions">
+        <div class="icon-btn">🔔</div>
+        <div class="avatar-circle" id="avatar-initial">—</div>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+      <div class="card card-hero">
+        <div class="card-hero-top">
+          <div>
+            <div class="card-label">Total Earnings</div>
+            <div class="big-number">₦0</div>
+            <div class="delta-positive" style="color:var(--muted-2);">No activity yet</div>
+          </div>
+          <div class="select-pill">This Month ▾</div>
+        </div>
+        <div class="chart-placeholder"><span>Your earnings chart will appear here</span></div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="card-label">Successful Referrals</div>
+          <div class="big-number">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="card-label">Pending Earnings</div>
+          <div class="big-number">₦0</div>
+        </div>
+        <div class="stat-card">
+          <div class="card-label">Deals</div>
+          <div class="big-number">0</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="list-card-head">
+          <h3>Recent Referrals</h3>
+          <a href="#" class="view-all">View all</a>
+        </div>
+        <div class="empty-state">
+          <div class="emoji">📭</div>
+          <p>No referrals yet. Share your referral link to get started.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  (async () => {
+    showLoader("Loading your dashboard...");
+
+    const sessionPromise = requireAuthOrRedirect();
+    const session = await withMinDelay(sessionPromise);
+
+    if (!session) return; // already redirecting to /login
+
+    const user = await getCurrentUser();
+    const name = (user && user.user_metadata && user.user_metadata.name) || "there";
+
+    document.getElementById("user-name").textContent = name;
+    document.getElementById("avatar-initial").textContent = name.trim().charAt(0).toUpperCase();
+
+    hideLoader();
+    document.getElementById("dash-shell").style.display = "flex";
+  })();
+
+  document.getElementById("logout-btn").addEventListener("click", async () => {
+    showLoader("Logging you out...");
+    await withMinDelay(logoutUser());
+  });
+</script>
+
+</body>
+</html>

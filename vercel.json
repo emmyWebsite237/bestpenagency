@@ -1,0 +1,12 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/influenzar", "destination": "/influenzar.html" },
+    { "source": "/register", "destination": "/register.html" },
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/forgot-password", "destination": "/forgot-password.html" },
+    { "source": "/reset-password", "destination": "/reset-password.html" },
+    { "source": "/confirmed", "destination": "/confirmed.html" },
+    { "source": "/dashboard", "destination": "/dashboard.html" }
+  ]
+}
