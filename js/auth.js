@@ -94,3 +94,34 @@ async function requireAuthOrRedirect() {
   }
   return data.session;
 }
+
+// ---- Site-wide "cool loading" nav intercept ----
+// Any plain <a href="/somewhere"> link (internal page, not a same-page
+// "#" anchor, not external, not a new tab) gets caught here and shows
+// the 2s loader before actually navigating — so no page-to-page jump
+// ever feels instant/flat.
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("a[href]").forEach((link) => {
+    const href = link.getAttribute("href");
+    if (
+      !href ||
+      href.startsWith("#") ||
+      href.startsWith("http") ||
+      href.startsWith("mailto:") ||
+      href.startsWith("tel:") ||
+      link.target === "_blank" ||
+      link.hasAttribute("data-no-loader")
+    ) {
+      return;
+    }
+
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const text = link.getAttribute("data-loading-text") || "Loading...";
+      showLoader(text);
+      setTimeout(() => {
+        window.location.href = href;
+      }, 2000);
+    });
+  });
+});
