@@ -47,12 +47,15 @@ function hideBanner(el) {
 
 // ---- Auth actions ----
 
-async function registerUser({ name, email, password }) {
+async function registerUser({ name, email, password, referredByCode }) {
   return supabaseClient.auth.signUp({
     email,
     password,
     options: {
-      data: { name }, // stored in user_metadata, no separate table needed
+      data: {
+        name,
+        referred_by_code: referredByCode ? referredByCode.trim().toUpperCase() : null,
+      },
       emailRedirectTo: `${SITE_URL}/confirmed`,
     },
   });
@@ -95,11 +98,57 @@ async function requireAuthOrRedirect() {
   return data.session;
 }
 
+// ---- Referral system ----
+
+// Call on any page a referral link could land on (influenzar, home, etc).
+// Reads ?ref=CODE from the URL and remembers it so /register can pick it
+// up later, even if the visitor browses around first.
+function captureReferralFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get("ref");
+  if (ref) {
+    localStorage.setItem("bestpen_ref_code", ref.trim().toUpperCase());
+  }
+}
+
+function getStoredReferralCode() {
+  return localStorage.getItem("bestpen_ref_code") || "";
+}
+
+// Checks whether a referral code actually belongs to a real user.
+// Queries the public "referral_lookup" view (exposes ONLY the code
+// column — never names or emails — see the Supabase schema file).
+async function checkReferralCode(code) {
+  const clean = (code || "").trim().toUpperCase();
+  if (!clean) return { checked: false };
+
+  const { data, error } = await supabaseClient
+    .from("referral_lookup")
+    .select("referral_code")
+    .eq("referral_code", clean)
+    .maybeSingle();
+
+  if (error) return { checked: true, valid: false, error: true };
+  return { checked: true, valid: !!data };
+}
+
 // ---- Site-wide "cool loading" nav intercept ----
 // Any plain <a href="/somewhere"> link (internal page, not a same-page
-// "#" anchor, not external, not a new tab) gets caught here and shows
-// the 2s loader before actually navigating — so no page-to-page jump
-// ever feels instant/flat.
+// "#" anchor, not external, not a new tab) pauses for 2s behind a thin
+// top progress bar before actually navigating — no destination text,
+// just a quick "something is happening" beat so nothing feels instant.
+function showTopBar() {
+  let bar = document.getElementById("top-progress-bar");
+  if (!bar) {
+    bar = document.createElement("div");
+    bar.id = "top-progress-bar";
+    bar.className = "top-progress-bar";
+    bar.innerHTML = '<div class="top-progress-fill"></div>';
+    document.body.appendChild(bar);
+  }
+  requestAnimationFrame(() => bar.classList.add("show"));
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll("a[href]").forEach((link) => {
     const href = link.getAttribute("href");
@@ -117,8 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     link.addEventListener("click", (e) => {
       e.preventDefault();
-      const text = link.getAttribute("data-loading-text") || "Loading...";
-      showLoader(text);
+      showTopBar();
       setTimeout(() => {
         window.location.href = href;
       }, 2000);

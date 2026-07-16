@@ -54,6 +54,13 @@
           <div class="err-msg">Passwords don't match.</div>
         </div>
 
+        <div class="field field-referral" id="field-ref">
+          <label for="ref-code">Referral code <span style="font-weight:400;color:var(--muted);">(optional)</span></label>
+          <input type="text" id="ref-code" placeholder="e.g. AB12XZ9K" autocomplete="off" maxlength="8" style="text-transform:uppercase;">
+          <span class="ref-check-icon" id="ref-check-icon"></span>
+          <div class="ref-status-text" id="ref-status-text"></div>
+        </div>
+
         <button type="submit" class="btn btn-primary btn-block" id="submit-btn">Create account →</button>
       </form>
 
@@ -63,7 +70,7 @@
         <p>We've sent a confirmation link to <b id="sent-email"></b>. Tap it to activate your account — you'll be brought right back here.</p>
       </div>
 
-      <p class="auth-foot">Already have an account? <a href="/login" class="link-blue" data-loading-text="Taking you to log in...">Log in</a></p>
+      <p class="auth-foot">Already have an account? <a href="/login" class="link-blue">Log in</a></p>
     </div>
   </div>
 
@@ -76,6 +83,52 @@
   const form = document.getElementById("register-form");
   const banner = document.getElementById("banner");
   const submitBtn = document.getElementById("submit-btn");
+  const refInput = document.getElementById("ref-code");
+  const refIcon = document.getElementById("ref-check-icon");
+  const refStatus = document.getElementById("ref-status-text");
+
+  // Prefill from a referral link the visitor arrived on earlier (?ref=CODE),
+  // captured on influenzar.html and remembered in localStorage.
+  const storedRef = getStoredReferralCode();
+  if (storedRef) {
+    refInput.value = storedRef;
+    validateReferralField(); // check it immediately since it's prefilled
+  }
+
+  refInput.addEventListener("input", () => {
+    refInput.value = refInput.value.toUpperCase();
+  });
+
+  // Checked the instant the cursor leaves the box (on blur), not on every keystroke.
+  refInput.addEventListener("blur", validateReferralField);
+
+  async function validateReferralField() {
+    const code = refInput.value.trim();
+    refStatus.className = "ref-status-text";
+    if (!code) {
+      refIcon.className = "ref-check-icon";
+      return;
+    }
+
+    refIcon.className = "ref-check-icon show spinning";
+    const result = await checkReferralCode(code);
+
+    if (result.error) {
+      refIcon.className = "ref-check-icon show";
+      return;
+    }
+    if (result.valid) {
+      refIcon.className = "ref-check-icon show valid";
+      refIcon.textContent = "✓";
+      refStatus.textContent = "Valid referral code.";
+      refStatus.className = "ref-status-text valid";
+    } else {
+      refIcon.className = "ref-check-icon show invalid";
+      refIcon.textContent = "✕";
+      refStatus.textContent = "We couldn't find that code — you can still sign up without it.";
+      refStatus.className = "ref-status-text invalid";
+    }
+  }
 
   function clearErrors(){
     ["name","email","password","confirm"].forEach(id=>{
@@ -108,7 +161,12 @@
     showLoader("Creating your account...");
 
     try {
-      const { data, error } = await withMinDelay(registerUser({ name, email, password }));
+      const { data, error } = await withMinDelay(registerUser({
+        name,
+        email,
+        password,
+        referredByCode: refInput.value.trim() || null,
+      }));
 
       if (error) {
         hideLoader();
@@ -117,6 +175,7 @@
         return;
       }
 
+      localStorage.removeItem("bestpen_ref_code");
       hideLoader();
       form.style.display = "none";
       document.getElementById("sent-email").textContent = email;

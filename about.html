@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us - Bestpen Agency</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;text-decoration:none;list-style:none;scroll-behavior:smooth;}
+    p{text-align:justify;text-justify:inter-word;}
+    body{font-family:'Host Grotesk',sans-serif;letter-spacing:-0.02em;background:#f8fafc;overflow-x:hidden;color:#0f172a;position:relative;animation:pageFadeIn .6s ease both;}
+    @keyframes pageFadeIn{from{opacity:0;}to{opacity:1;}}
+    body.menu-open{overflow:hidden;}
+    :root{
+      --primary:#0f5cff;--primary-hover:#004be5;--dark:#020617;--dark-card:#0b1532;
+      --text-muted:#64748b;--text-light:#cbd5e1;--yellow:#facc15;
+      --border:rgba(255,255,255,0.08);--shadow:0 20px 40px rgba(0,0,0,0.06);
+    }
+    .container{width:90%;max-width:1240px;margin:auto;}
+    img{max-width:100%;height:auto;display:block;}
+    a{text-decoration:none !important;}
+
+    .btn-primary,.btn-outline,.join-btn{transition:transform .25s ease,box-shadow .25s ease,background .25s ease;}
+    .btn-primary:hover,.btn-outline:hover,.join-btn:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 12px 30px rgba(15,92,255,0.35);}
+    .btn-primary{background:var(--primary);color:#fff;padding:14px 28px;border-radius:10px;font-weight:600;font-size:15px;display:inline-flex;align-items:center;gap:10px;}
+    .btn-primary:hover{background:var(--primary-hover);}
+    .btn-outline{border:1px solid rgba(255,255,255,0.2);color:#fff;padding:14px 28px;border-radius:10px;font-weight:600;font-size:15px;display:inline-flex;align-items:center;gap:10px;}
+    .btn-outline:hover{background:rgba(255,255,255,0.05);}
+    .icon-placeholder{display:inline-flex;align-items:center;justify-content:center;background:rgba(15,92,255,0.1);color:var(--primary);border-radius:50%;flex-shrink:0;}
+
+    header{width:100%;background:radial-gradient(circle at 15% 20%, rgba(15,92,255,0.25) 0%, transparent 40%),radial-gradient(circle at 85% 70%, rgba(99,102,241,0.15) 0%, transparent 45%),linear-gradient(180deg, #020617 0%, #050d24 100%);position:relative;overflow:hidden;}
+    .navbar{display:flex;align-items:center;justify-content:space-between;padding:24px 0;}
+    .logo{display:flex;align-items:center;gap:10px;color:#fff;font-size:25px;font-weight:800;}
+    .logo-circle{width:50px;height:50px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;background:white;flex-shrink:0;}
+    .logo-circle img{width:120%;height:120%;object-fit:cover;display:block;}
+    .nav-links{display:flex;gap:32px;}
+    .nav-links a{color:var(--text-light);font-size:14px;font-weight:500;transition:0.2s;}
+    .nav-links a:hover,.nav-links a.active{color:#fff;}
+    .nav-right{display:flex;align-items:center;gap:24px;}
+    .nav-right .login{color:#fff;font-size:14px;font-weight:500;}
+    .join-btn{background:var(--primary);color:#fff;padding:11px 22px;border-radius:8px;font-weight:600;font-size:14px;}
+    .mobile-menu-btn{display:none;background:none;border:none;color:#fff;font-size:22px;cursor:pointer;z-index:1001;}
+
+    .sidebar{position:fixed;top:0;right:0;width:300px;max-width:85%;height:100dvh;display:flex;flex-direction:column;padding:100px 30px 30px;background:radial-gradient(circle at 50% 0%, rgba(15,92,255,.15) 0%, transparent 50%),#050d24;border-left:1px solid var(--border);z-index:1000;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .35s ease, visibility .35s ease;}
+    .sidebar.active{opacity:1;visibility:visible;pointer-events:auto;}
+    .sidebar-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(2,6,23,0.7);backdrop-filter:blur(4px);z-index:999;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .35s ease, visibility .35s ease;}
+    .sidebar-overlay.active{opacity:1;visibility:visible;pointer-events:auto;}
+    .sidebar-links{display:flex;flex:1;flex-direction:column;gap:24px;}
+    .sidebar-links a{color:var(--text-light);font-size:16px;font-weight:500;display:block;padding:8px 0;transition:0.2s;}
+    .sidebar-links a:hover,.sidebar-links a.active{color:#fff;padding-left:6px;}
+    .sidebar-footer{display:flex;margin-top:auto;flex-direction:column;gap:16px;border-top:1px solid var(--border);padding-top:24px;}
+    .sidebar-footer .login{color:#fff;font-weight:500;text-align:center;padding:12px;}
+    .sidebar-footer .join-btn{text-align:center;padding:14px;}
+
+    .page-hero{padding:70px 0 90px;text-align:center;}
+    .page-hero .section-tag{color:var(--primary);font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;display:block;}
+    .page-hero h1{font-size:48px;line-height:1.15;color:#fff;font-weight:800;margin-bottom:18px;}
+    .page-hero p{color:var(--text-light);font-size:16px;line-height:1.7;max-width:640px;margin:0 auto;}
+
+    .content-section{padding:70px 0;background:#fff;}
+    .section-tag{color:var(--primary);font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;display:block;}
+    .section-title{font-size:34px;font-weight:800;margin-bottom:20px;}
+
+    .coming-soon-card{
+      max-width:560px;margin:0 auto;text-align:center;
+      background:#fff;border:1px solid #f1f5f9;border-radius:20px;padding:60px 40px;
+      box-shadow:var(--shadow);
+    }
+    .coming-soon-card .icon-placeholder{width:64px;height:64px;font-size:26px;margin:0 auto 24px;}
+    .coming-soon-card h2{font-size:24px;font-weight:800;margin-bottom:14px;}
+    .coming-soon-card p{color:var(--text-muted);font-size:15px;line-height:1.7;margin-bottom:28px;}
+
+    .service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+    .service-card{background:#fff;border:1px solid #f1f5f9;border-radius:16px;padding:30px 24px;transition:0.2s;}
+    .service-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);}
+    .service-card .icon-placeholder{width:54px;height:54px;margin-bottom:18px;font-size:20px;}
+    .service-card h3{font-size:18px;margin-bottom:10px;}
+    .service-card p{color:var(--text-muted);line-height:1.6;font-size:14px;}
+
+    footer{background:#020617;padding:60px 0 30px;border-top:1px solid var(--border);}
+    .footer-grid{display:grid;grid-template-columns:1.5fr 0.8fr 0.9fr 0.8fr;gap:40px;color:#fff;}
+    .footer-about p{color:var(--text-light);font-size:14px;line-height:1.6;margin-top:16px;}
+    footer a{text-decoration:underline !important;}
+    .footer-links h3{font-size:15px;font-weight:600;margin-bottom:16px;}
+    .footer-links ul{display:flex;flex-direction:column;gap:12px;}
+    .footer-links ul li a{color:var(--text-light);font-size:14px;}
+    .social-icons{display:flex;gap:12px;margin-top:16px;}
+    .social-icons .icon-placeholder{width:36px;height:36px;background:rgba(255,255,255,0.05);color:#fff;font-size:14px;}
+    .copyright{margin-top:48px;text-align:center;color:var(--text-muted);font-size:13px;}
+
+    .top-progress-bar{position:fixed;top:0;left:0;width:100%;height:3px;z-index:10000;background:transparent;opacity:0;transition:opacity .2s ease;}
+    .top-progress-bar.show{opacity:1;}
+    .top-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--primary),#7C8CFF);animation:topbarfill 2s ease forwards;}
+    @keyframes topbarfill{0%{width:0%;}60%{width:75%;}100%{width:100%;}}
+
+    @media(max-width:992px){
+      .nav-links,.nav-right{display:none;}
+      .mobile-menu-btn{display:block;}
+      .footer-grid{grid-template-columns:1fr 1fr;}
+      .service-grid{grid-template-columns:1fr 1fr;}
+    }
+    @media(max-width:576px){
+      .page-hero h1{font-size:32px;}
+      .section-title{font-size:26px;}
+      .service-grid{grid-template-columns:1fr;}
+      .coming-soon-card{padding:44px 24px;}
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<nav class="sidebar" id="sidebarMenu">
+  <ul class="sidebar-links">
+    <li><a href="/services">Services</a></li>
+    <li><a href="/our-work">Our Work</a></li>
+    <li><a href="/influenzar">Influenzar Program</a></li>
+    <li><a href="/resources">Resources</a></li>
+    <li><a href="/about" class="active">About Us</a></li>
+  </ul>
+  <div class="sidebar-footer">
+    <a href="/login" class="login">Log In</a>
+    <a href="/register" class="join-btn">Join Influenzar →</a>
+  </div>
+</nav>
+
+<header>
+  <div class="container">
+    <nav class="navbar">
+      <a href="/influenzar" class="logo">
+        <div class="logo-circle"><img decoding="async" src="images/logo.png" alt="Bestpen Logo"></div>
+        Best Pen Agency
+      </a>
+      <ul class="nav-links">
+        <li><a href="/services">Services</a></li>
+        <li><a href="/our-work">Our Work</a></li>
+        <li><a href="/influenzar">Influenzar Program</a></li>
+        <li><a href="/resources">Resources</a></li>
+        <li><a href="/about" class="active">About Us</a></li>
+      </ul>
+      <div class="nav-right">
+        <a href="/login" class="login">Log In</a>
+        <a href="/register" class="join-btn">Join Influenzar →</a>
+      </div>
+      <button class="mobile-menu-btn" id="menuToggle" aria-label="Toggle Navigation"><i class="fa-solid fa-bars"></i></button>
+    </nav>
+
+    <div class="page-hero">
+      <span class="section-tag" style="color:var(--primary);">About Us</span>
+      <h1>About Bestpen</h1>
+      <p>A creative and advertising agency helping brands grow through powerful digital solutions.</p>
+    </div>
+  </div>
+</header>
+
+
+<section class="content-section">
+  <div class="container">
+    <div class="coming-soon-card">
+      <span class="icon-placeholder"><i class="fa-solid fa-people-group"></i></span>
+      <h2>Our story is on its way</h2>
+      <p>We're putting together the full story of Bestpen Agency — who we are, how we work, and what we believe in. Check back soon to learn more about the team behind the work.</p>
+      <a href="/influenzar" class="btn-primary" style="background:var(--primary);">Back to Home →</a>
+    </div>
+  </div>
+</section>
+
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-about">
+        <a href="/influenzar" class="logo">
+          <div class="logo-circle"><img decoding="async" src="images/logo.png" alt="Bestpen Logo"></div>
+          Best Pen Agency
+        </a>
+        <p>A creative and advertising agency helping brands grow through powerful digital solutions.</p>
+      </div>
+      <div class="footer-links">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="/services">Services</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="/our-work">Our Work</a></li>
+          <li><a href="/resources">Resources</a></li>
+          <li><a href="/about">About Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h3>Legal</h3>
+        <ul>
+          <li><a href="#">Terms &amp; Conditions</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Refund Policy</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h3>Follow Us</h3>
+        <div class="social-icons">
+          <span class="icon-placeholder"><a href="https://web.facebook.com/BestPenAgency" target="_blank"><i class="fa-brands fa-facebook-f"></i></a></span>
+          <span class="icon-placeholder"><a href="https://x.com" target="_blank"><i class="fa-brands fa-x-twitter"></i></a></span>
+          <span class="icon-placeholder"><a href="https://www.instagram.com/best_pen_agency/" target="_blank"><i class="fa-brands fa-instagram"></i></a></span>
+          <span class="icon-placeholder"><a href="https://linkedin.com" target="_blank"><i class="fa-brands fa-linkedin-in"></i></a></span>
+        </div>
+      </div>
+    </div>
+    <div class="copyright">© 2026 Bestpen. All Rights Reserved.</div>
+  </div>
+</footer>
+
+<script>
+const menuToggle = document.getElementById("menuToggle");
+const sidebarMenu = document.getElementById("sidebarMenu");
+const sidebarOverlay = document.getElementById("sidebarOverlay");
+menuToggle.addEventListener("click", () => {
+  sidebarMenu.classList.toggle("active");
+  sidebarOverlay.classList.toggle("active");
+  document.body.classList.toggle("menu-open");
+});
+sidebarOverlay.addEventListener("click", () => {
+  sidebarMenu.classList.remove("active");
+  sidebarOverlay.classList.remove("active");
+  document.body.classList.remove("menu-open");
+});
+
+// 2s top-progress-bar transition for internal links (same behavior as influenzar.html)
+document.querySelectorAll("a[href]").forEach((link) => {
+  const href = link.getAttribute("href");
+  if (!href || href.startsWith("#") || href.startsWith("http") || href.startsWith("mailto:") || href.startsWith("tel:") || link.target === "_blank") return;
+  link.addEventListener("click", (e) => {
+    e.preventDefault();
+    let bar = document.getElementById("top-progress-bar");
+    if (!bar) {
+      bar = document.createElement("div");
+      bar.id = "top-progress-bar";
+      bar.className = "top-progress-bar";
+      bar.innerHTML = '<div class="top-progress-fill"></div>';
+      document.body.appendChild(bar);
+    }
+    requestAnimationFrame(() => bar.classList.add("show"));
+    setTimeout(() => { window.location.href = href; }, 2000);
+  });
+});
+</script>
+
+</body>
+</html>

@@ -10,6 +10,10 @@
     { "source": "/forgot-password", "destination": "/forgot-password.html" },
     { "source": "/reset-password", "destination": "/reset-password.html" },
     { "source": "/confirmed", "destination": "/confirmed.html" },
-    { "source": "/dashboard", "destination": "/dashboard.html" }
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/services", "destination": "/services.html" },
+    { "source": "/our-work", "destination": "/our-work.html" },
+    { "source": "/resources", "destination": "/resources.html" },
+    { "source": "/about", "destination": "/about.html" }
   ]
 }
