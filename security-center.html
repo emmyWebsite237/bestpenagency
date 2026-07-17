@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Security Center - Best Pen Agency</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app-shell" id="app-shell" style="display:none;">
+  <div class="app-topbar" id="app-topbar-root"></div>
+  <main class="app-main">
+    <h1 class="page-title">Security Center / Customer Services</h1>
+    <p class="page-sub">Manage your account security and get help from our team.</p>
+    <div class="card">
+      <div class="empty-state">
+        <div class="emoji">🛡️</div>
+        <p>Security tools and direct customer support are coming soon. For urgent issues, contact Best Pen Agency through the usual channels.</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  initGatedPage("settings", () => {});
+</script>
+
+</body>
+</html>

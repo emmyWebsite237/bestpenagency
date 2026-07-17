@@ -14,6 +14,18 @@
     { "source": "/services", "destination": "/services.html" },
     { "source": "/our-work", "destination": "/our-work.html" },
     { "source": "/resources", "destination": "/resources.html" },
-    { "source": "/about", "destination": "/about.html" }
+    { "source": "/about", "destination": "/about.html" },
+    { "source": "/referrals", "destination": "/referrals.html" },
+    { "source": "/earnings", "destination": "/earnings.html" },
+    { "source": "/payouts", "destination": "/payouts.html" },
+    { "source": "/leaderboard", "destination": "/leaderboard.html" },
+    { "source": "/rewards", "destination": "/rewards.html" },
+    { "source": "/settings", "destination": "/settings.html" },
+    { "source": "/profile", "destination": "/profile.html" },
+    { "source": "/payout-settings", "destination": "/payout-settings.html" },
+    { "source": "/themes", "destination": "/themes.html" },
+    { "source": "/security-center", "destination": "/security-center.html" },
+    { "source": "/feedback", "destination": "/feedback.html" },
+    { "source": "/close-account", "destination": "/close-account.html" }
   ]
 }

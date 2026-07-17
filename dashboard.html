@@ -3,35 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dashboard - Bestpen Influenzar</title>
+<title>Dashboard - Best Pen Agency Influenzar</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<div class="dash-shell" id="dash-shell" style="display:none;">
+<!-- ============ ONBOARDING WIZARD (first login only) ============ -->
+<div class="onboarding-overlay" id="onboarding-overlay" style="display:none;">
+  <div class="onboarding-step" id="onboarding-step">
+    <!-- content injected by JS per step -->
+  </div>
+</div>
 
-  <aside class="dash-sidebar">
-    <div class="brand"><span class="brand-mark">B</span> Bestpen</div>
-    <nav class="dash-nav">
-      <a href="/dashboard" class="dash-nav-item active"><span class="dash-nav-icon">▦</span> Overview</a>
-      <a href="#" class="dash-nav-item"><span class="dash-nav-icon">👤</span> Referrals</a>
-      <a href="#" class="dash-nav-item"><span class="dash-nav-icon">◎</span> Earnings</a>
-      <a href="#" class="dash-nav-item"><span class="dash-nav-icon">▭</span> Payouts</a>
-      <a href="#" class="dash-nav-item"><span class="dash-nav-icon">🏆</span> Leaderboard</a>
-      <a href="#" class="dash-nav-item"><span class="dash-nav-icon">🎁</span> Rewards</a>
-      <a href="#" class="dash-nav-item"><span class="dash-nav-icon">⚙</span> Settings</a>
-    </nav>
-    <button class="dash-logout" id="logout-btn"><span class="dash-nav-icon">⏻</span> Log out</button>
-  </aside>
+<!-- ============ MAIN APP ============ -->
+<div class="app-shell" id="app-shell" style="display:none;">
+  <div class="app-topbar" id="app-topbar-root"></div>
 
-  <main class="dash-main">
-    <div class="dash-topbar">
-      <h1 class="dash-welcome">Welcome back, <span id="user-name">—</span> 👋</h1>
-      <div class="dash-top-actions">
-        <div class="icon-btn">🔔</div>
-        <div class="avatar-circle" id="avatar-initial">—</div>
-      </div>
-    </div>
+  <main class="app-main">
+    <h1 class="page-title">Welcome back, <span id="user-name">—</span> 👋</h1>
+    <p class="page-sub">Here's what's happening with your account.</p>
 
     <div class="dash-grid">
       <div class="card card-hero">
@@ -72,7 +62,7 @@
       <div class="card">
         <div class="list-card-head">
           <h3>Recent Referrals</h3>
-          <a href="#" class="view-all">View all</a>
+          <a href="/referrals" class="view-all">View all</a>
         </div>
         <div class="empty-state">
           <div class="emoji">📭</div>
@@ -87,58 +77,83 @@
         </div>
         <div class="empty-state" id="services-purchased-empty">
           <div class="emoji">🧾</div>
-          <p>No services purchased yet. Everything you buy from Bestpen will show up here.</p>
+          <p>No services purchased yet. Everything you buy from Best Pen Agency will show up here.</p>
         </div>
         <div id="services-purchased-list" style="display:none;"></div>
       </div>
     </div>
   </main>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-client.js"></script>
 <script src="js/auth.js"></script>
 <script>
+  const MALE_AVATAR_COUNT = 10;
+  const FEMALE_AVATAR_COUNT = 10;
+
+  let currentUser = null;
+  let profile = null;
+  const onboarding = { username: "", dob: "", address: "", gender: "", avatarUrl: "" };
+
   (async () => {
     showLoader("Loading your dashboard...");
 
     const sessionPromise = requireAuthOrRedirect();
     const session = await withMinDelay(sessionPromise);
-
     if (!session) return; // already redirecting to /login
 
-    const user = await getCurrentUser();
-    const name = (user && user.user_metadata && user.user_metadata.name) || "there";
+    currentUser = await getCurrentUser();
+    profile = await getProfile(currentUser.id);
+
+    hideLoader();
+
+    if (!profile || !profile.onboarding_completed) {
+      onboarding.username = (profile && profile.username) || (currentUser.user_metadata && currentUser.user_metadata.name) || "";
+      document.getElementById("onboarding-overlay").style.display = "flex";
+      renderOnboardingStep(1);
+    } else {
+      showDashboard();
+    }
+  })();
+
+  function showDashboard() {
+    const name = (profile && (profile.username || profile.name)) ||
+                 (currentUser.user_metadata && currentUser.user_metadata.name) || "there";
 
     document.getElementById("user-name").textContent = name;
-    document.getElementById("avatar-initial").textContent = name.trim().charAt(0).toUpperCase();
 
-    // Referral link, from the profiles row auto-created at signup.
-    const { data: profile } = await supabaseClient
-      .from("profiles")
-      .select("referral_code")
-      .eq("id", user.id)
-      .maybeSingle();
+    mountAppChrome({
+      activeKey: "dashboard",
+      name: name,
+      avatarUrl: profile && profile.avatar_url,
+    });
 
-    if (profile && profile.referral_code) {
-      const link = `${window.location.origin}/influenzar?ref=${profile.referral_code}`;
-      document.getElementById("referral-link-text").textContent = link;
-      document.getElementById("referral-card").style.display = "block";
-      document.getElementById("copy-ref-btn").addEventListener("click", () => {
-        navigator.clipboard.writeText(link);
-        const btn = document.getElementById("copy-ref-btn");
-        const original = btn.textContent;
-        btn.textContent = "Copied!";
-        setTimeout(() => { btn.textContent = original; }, 1500);
-      });
-    }
+    loadReferralLink();
+    loadPurchases();
 
-    // Services purchased, from the purchases table (empty until real orders exist).
+    document.getElementById("app-shell").style.display = "block";
+  }
+
+  async function loadReferralLink() {
+    if (!profile || !profile.referral_code) return;
+    const link = `${window.location.origin}/influenzar?ref=${profile.referral_code}`;
+    document.getElementById("referral-link-text").textContent = link;
+    document.getElementById("referral-card").style.display = "block";
+    document.getElementById("copy-ref-btn").addEventListener("click", () => {
+      navigator.clipboard.writeText(link);
+      const btn = document.getElementById("copy-ref-btn");
+      const original = btn.textContent;
+      btn.textContent = "Copied!";
+      setTimeout(() => { btn.textContent = original; }, 1500);
+    });
+  }
+
+  async function loadPurchases() {
     const { data: purchases } = await supabaseClient
       .from("purchases")
       .select("service_name, amount, status, created_at")
-      .eq("user_id", user.id)
+      .eq("user_id", currentUser.id)
       .order("created_at", { ascending: false });
 
     if (purchases && purchases.length > 0) {
@@ -158,15 +173,162 @@
         </div>
       `).join("");
     }
+  }
 
-    hideLoader();
-    document.getElementById("dash-shell").style.display = "flex";
-  })();
+  // ================= ONBOARDING WIZARD =================
 
-  document.getElementById("logout-btn").addEventListener("click", async () => {
-    showLoader("Logging you out...");
-    await withMinDelay(logoutUser());
-  });
+  function progressDots(step, total) {
+    let html = '<div class="onboarding-progress">';
+    for (let i = 1; i <= total; i++) {
+      html += `<span class="${i <= step ? 'done' : ''}"></span>`;
+    }
+    return html + '</div>';
+  }
+
+  function renderOnboardingStep(step) {
+    const el = document.getElementById("onboarding-step");
+    el.classList.remove("fade-in");
+    void el.offsetWidth; // restart animation
+    el.classList.add("fade-in");
+
+    if (step === 1) {
+      el.innerHTML = `
+        ${progressDots(1, 4)}
+        <h2>Let's set up your account</h2>
+        <p class="sub">Tell us a bit about yourself.</p>
+        <div class="field">
+          <label for="ob-username">Username</label>
+          <input type="text" id="ob-username" placeholder="Choose a username" value="${onboarding.username || ''}">
+          <div class="err-msg" id="ob-username-err">Please enter a username.</div>
+        </div>
+        <div class="field">
+          <label for="ob-dob">Date of birth</label>
+          <input type="date" id="ob-dob" value="${onboarding.dob || ''}">
+          <div class="err-msg" id="ob-dob-err">Please enter your date of birth.</div>
+        </div>
+        <div class="field">
+          <label for="ob-address">Address</label>
+          <input type="text" id="ob-address" placeholder="Street, city, state" value="${onboarding.address || ''}">
+          <div class="err-msg" id="ob-address-err">Please enter your address.</div>
+        </div>
+        <button class="btn btn-primary btn-block" id="ob-next">Continue →</button>
+      `;
+      document.getElementById("ob-next").addEventListener("click", () => {
+        const username = document.getElementById("ob-username").value.trim();
+        const dob = document.getElementById("ob-dob").value;
+        const address = document.getElementById("ob-address").value.trim();
+
+        document.getElementById("ob-username-err").style.display = username ? "none" : "block";
+        document.getElementById("ob-dob-err").style.display = dob ? "none" : "block";
+        document.getElementById("ob-address-err").style.display = address ? "none" : "block";
+        if (!username || !dob || !address) return;
+
+        onboarding.username = username;
+        onboarding.dob = dob;
+        onboarding.address = address;
+        renderOnboardingStep(2);
+      });
+    }
+
+    if (step === 2) {
+      el.innerHTML = `
+        ${progressDots(2, 4)}
+        <h2>What's your gender?</h2>
+        <p class="sub">This helps us show you the right avatar options next.</p>
+        <div class="gender-grid">
+          <button class="gender-btn" data-gender="male"><span class="emoji">👨</span> Male</button>
+          <button class="gender-btn" data-gender="female"><span class="emoji">👩</span> Female</button>
+        </div>
+      `;
+      el.querySelectorAll(".gender-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          onboarding.gender = btn.getAttribute("data-gender");
+          renderOnboardingStep(3);
+        });
+      });
+    }
+
+    if (step === 3) {
+      const count = onboarding.gender === "female" ? FEMALE_AVATAR_COUNT : MALE_AVATAR_COUNT;
+      const folder = onboarding.gender === "female" ? "female" : "male";
+      let grid = "";
+      for (let i = 1; i <= count; i++) {
+        const path = `assets/profile-pic/${folder}/avatar${i}.png`;
+        grid += `<div class="avatar-option" data-path="${path}"><img src="${path}" alt="Avatar ${i}" onerror="this.parentElement.textContent='${i}'"></div>`;
+      }
+      el.innerHTML = `
+        ${progressDots(3, 4)}
+        <h2>Pick your avatar</h2>
+        <p class="sub">Choose one to represent you on your dashboard.</p>
+        <div class="avatar-grid">${grid}</div>
+        <button class="btn btn-primary btn-block" id="ob-avatar-next" style="margin-top:24px;" disabled>Continue →</button>
+      `;
+      const nextBtn = document.getElementById("ob-avatar-next");
+      el.querySelectorAll(".avatar-option").forEach((opt) => {
+        opt.addEventListener("click", () => {
+          el.querySelectorAll(".avatar-option").forEach(o => o.classList.remove("selected"));
+          opt.classList.add("selected");
+          onboarding.avatarUrl = opt.getAttribute("data-path");
+          nextBtn.disabled = false;
+        });
+      });
+      nextBtn.addEventListener("click", () => renderOnboardingStep(4));
+    }
+
+    if (step === 4) {
+      el.innerHTML = `
+        ${progressDots(4, 4)}
+        <h2>You're all set</h2>
+        <p class="sub">Here's what we've got. Ready to go to your dashboard?</p>
+        <div class="profile-avatar-row">
+          <div class="profile-avatar"><img src="${onboarding.avatarUrl}" alt=""></div>
+        </div>
+        <div class="summary-row"><span class="label">Username</span><span class="value">${onboarding.username}</span></div>
+        <div class="summary-row"><span class="label">Gender</span><span class="value">${onboarding.gender === 'female' ? 'Female' : 'Male'}</span></div>
+        <div class="summary-row"><span class="label">Date of birth</span><span class="value">${onboarding.dob}</span></div>
+        <div class="summary-row"><span class="label">Address</span><span class="value">${onboarding.address}</span></div>
+        <div id="ob-submit-error" class="banner banner-error" style="margin-top:16px;"></div>
+        <button class="btn btn-primary btn-block" id="ob-finish" style="margin-top:24px;">Go to Dashboard →</button>
+      `;
+      document.getElementById("ob-finish").addEventListener("click", async () => {
+        const btn = document.getElementById("ob-finish");
+        btn.disabled = true;
+        showLoader("Setting up your dashboard...");
+
+        const { error } = await withMinDelay(updateProfile(currentUser.id, {
+          username: onboarding.username,
+          gender: onboarding.gender,
+          avatar_url: onboarding.avatarUrl,
+          date_of_birth: onboarding.dob,
+          address: onboarding.address,
+          onboarding_completed: true,
+        }));
+
+        hideLoader();
+
+        if (error) {
+          btn.disabled = false;
+          const errEl = document.getElementById("ob-submit-error");
+          errEl.textContent = "Something went wrong saving your details. Please try again.";
+          errEl.classList.add("show");
+          return;
+        }
+
+        profile = {
+          ...profile,
+          username: onboarding.username,
+          gender: onboarding.gender,
+          avatar_url: onboarding.avatarUrl,
+          date_of_birth: onboarding.dob,
+          address: onboarding.address,
+          onboarding_completed: true,
+        };
+
+        document.getElementById("onboarding-overlay").style.display = "none";
+        showDashboard();
+      });
+    }
+  }
 </script>
 
 </body>

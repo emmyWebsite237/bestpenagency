@@ -1,5 +1,5 @@
 -- ============================================================
--- Bestpen Influenzar — Supabase schema
+-- Best Pen Agency Influenzar — Supabase schema
 -- Paste this whole file into Supabase Dashboard → SQL Editor →
 -- New Query → Run. Safe to run once on a fresh project.
 -- ============================================================

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings - Best Pen Agency</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app-shell" id="app-shell" style="display:none;">
+  <div class="app-topbar" id="app-topbar-root"></div>
+  <main class="app-main">
+    <h1 class="page-title">Settings</h1>
+    <p class="page-sub">Manage your account.</p>
+
+    <div id="reset-banner" class="banner" style="max-width:560px;"></div>
+
+    <div class="settings-list">
+      <a href="/profile" class="settings-item">
+        <span class="left">👤 My Profile</span>
+        <span class="chev">›</span>
+      </a>
+      <a href="/payout-settings" class="settings-item">
+        <span class="left">💳 Payout Settings</span>
+        <span class="chev">›</span>
+      </a>
+      <button class="settings-item" id="reset-password-btn" style="cursor:pointer;">
+        <span class="left">🔑 Reset Password</span>
+        <span class="chev">›</span>
+      </button>
+      <a href="/themes" class="settings-item">
+        <span class="left">🎨 Themes</span>
+        <span class="chev">›</span>
+      </a>
+      <a href="/security-center" class="settings-item">
+        <span class="left">🛡️ Security Center / Customer Services</span>
+        <span class="chev">›</span>
+      </a>
+      <a href="/feedback" class="settings-item">
+        <span class="left">📝 Feedback and Suggestions</span>
+        <span class="chev">›</span>
+      </a>
+      <a href="/close-account" class="settings-item danger">
+        <span class="left">⚠️ Close Account</span>
+        <span class="chev">›</span>
+      </a>
+      <a href="/about" class="settings-item">
+        <span class="left">ℹ️ About</span>
+        <span class="chev">›</span>
+      </a>
+      <button class="settings-item danger" id="sign-out-btn" style="cursor:pointer;">
+        <span class="left">⏻ Sign Out</span>
+        <span class="chev">›</span>
+      </button>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  let pageUser = null;
+
+  initGatedPage("settings", (user) => {
+    pageUser = user;
+  });
+
+  document.getElementById("reset-password-btn").addEventListener("click", async () => {
+    if (!pageUser) return;
+    const banner = document.getElementById("reset-banner");
+    showLoader("Sending reset link...");
+    await withMinDelay(sendPasswordReset(pageUser.email));
+    hideLoader();
+    showBanner(banner, `A password reset link has been sent to ${pageUser.email}.`, "success");
+  });
+
+  document.getElementById("sign-out-btn").addEventListener("click", async () => {
+    showLoader("Logging you out...");
+    await withMinDelay(logoutUser());
+  });
+</script>
+
+</body>
+</html>
