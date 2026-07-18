@@ -1,11 +1,12 @@
-Drop your 10 male avatars into:
-  assets/profile-pic/male/avatar1.png  ... avatar10.png
+Avatar assets — already in place, cropped from your uploaded grids:
 
-Drop your 10 female avatars into:
-  assets/profile-pic/female/avatar1.png ... avatar10.png
+  assets/profile-pic/male/avatar1.png   ... avatar24.png   (24 images)
+  assets/profile-pic/female/avatar1.png ... avatar24.png   (24 images)
+  assets/profile-pic/nature/avatar1.png ... avatar36.png   (36 images)
 
-Exact filenames matter (lowercase, no spaces): avatar1.png through avatar10.png
-in each folder. The onboarding wizard on /dashboard reads these paths directly.
+The onboarding wizard on /dashboard shows the gender-matched grid first,
+then the nature-themed grid beneath it as an alternative option — either
+one can be picked.
 
-If any of these are .jpg instead of .png, tell Claude which ones and the
-extensions in dashboard.html's onboarding step 3 can be updated to match.
+If you want to swap any individual avatar later, just overwrite that exact
+file (same name) and it updates automatically — no code changes needed.
