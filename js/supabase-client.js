@@ -14,8 +14,8 @@
    key, protected by your Row Level Security rules, not a secret.
    ============================================================ */
 
-const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL"; // e.g. https://xxxxx.supabase.co
-const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+const SUPABASE_URL = "https://gywjjfrsqafaxdibvkox.supabase.co"; // e.g. https://xxxxx.supabase.co
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd5d2pqZnJzcWFmYXhkaWJ2a294Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NzcxNzMsImV4cCI6MjA5NzU1MzE3M30.HPDE7nj1uxww0BDhVtqm2il49IpR3Fp4Lwxnw1cczCE";
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
