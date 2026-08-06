@@ -172,6 +172,23 @@
           <p>Thanks — we've got your request for <b id="success-service"></b>. We'll reach out to <b id="success-email"></b> shortly.</p>
         </div>
       </div>
+
+      <div style="text-align:center;margin-top:24px;">
+        <button type="button" id="show-lookup-btn" style="background:none;border:none;color:var(--primary);font-weight:600;font-size:13.5px;cursor:pointer;">
+          Already requested a service? Enter your reference code →
+        </button>
+      </div>
+
+      <div class="request-card" id="lookup-card" style="display:none;margin-top:16px;">
+        <h2 style="font-size:18px;">Find Your Order</h2>
+        <p class="sub">Enter the reference code you were given when you submitted your request.</p>
+        <div id="lookup-banner" class="banner"></div>
+        <div class="field">
+          <label for="lookup-code">Reference code</label>
+          <input type="text" id="lookup-code" placeholder="e.g. AB12CD34EF56GHJ" style="text-transform:uppercase;" maxlength="15">
+        </div>
+        <button type="button" class="btn-primary" id="lookup-btn" style="width:100%;justify-content:center;">Continue My Order →</button>
+      </div>
     </div>
   </div>
 </section>
@@ -221,6 +238,10 @@
     banner.className = "banner";
   }
 
+  function slugify(str) {
+    return str.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  }
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     clearErrors();
@@ -238,37 +259,81 @@
     if (hasError) return;
 
     submitBtn.disabled = true;
+    loader.querySelector(".loader-text").textContent = "Sending your request...";
     loader.classList.add("show");
 
     const deviceId = getOrCreateDeviceId();
     const referralCode = getStoredReferralCode();
 
     const minDelay = new Promise((resolve) => setTimeout(resolve, 2000));
-    const submitPromise = supabaseClient.from("service_orders").insert({
-      customer_name: name,
-      customer_email: email,
-      customer_phone: phone || null,
-      service_name: service,
-      details: details || null,
-      device_id: deviceId,
-      referral_code: referralCode || null,
-    });
+    const submitPromise = supabaseClient
+      .from("service_orders")
+      .insert({
+        customer_name: name,
+        customer_email: email,
+        customer_phone: phone || null,
+        service_name: service,
+        details: details || null,
+        device_id: deviceId,
+        referral_code: referralCode || null,
+      })
+      .select()
+      .single();
 
-    const [{ error }] = await Promise.all([submitPromise, minDelay]);
-
-    loader.classList.remove("show");
+    const [{ data, error }] = await Promise.all([submitPromise, minDelay]);
 
     if (error) {
+      loader.classList.remove("show");
       submitBtn.disabled = false;
       banner.textContent = "Something went wrong sending your request. Please try again.";
       banner.className = "banner show banner-error";
       return;
     }
 
-    document.getElementById("form-view").style.display = "none";
-    document.getElementById("success-service").textContent = service;
-    document.getElementById("success-email").textContent = email;
-    document.getElementById("success-view").style.display = "block";
+    loader.querySelector(".loader-text").textContent = "Taking you to your order...";
+    setTimeout(() => {
+      window.location.href = `/services/${slugify(data.service_name)}/${data.reference_code}`;
+    }, 900);
+  });
+
+  // ---- "Already requested a service?" lookup ----
+  const showLookupBtn = document.getElementById("show-lookup-btn");
+  const lookupCard = document.getElementById("lookup-card");
+  const lookupBtn = document.getElementById("lookup-btn");
+  const lookupBanner = document.getElementById("lookup-banner");
+
+  showLookupBtn.addEventListener("click", () => {
+    lookupCard.style.display = lookupCard.style.display === "none" ? "block" : "none";
+  });
+
+  lookupBtn.addEventListener("click", async () => {
+    const code = document.getElementById("lookup-code").value.trim().toUpperCase();
+    lookupBanner.className = "banner";
+    if (!code) {
+      lookupBanner.textContent = "Please enter your reference code.";
+      lookupBanner.className = "banner show banner-error";
+      return;
+    }
+
+    lookupBtn.disabled = true;
+    loader.querySelector(".loader-text").textContent = "Looking up your order...";
+    loader.classList.add("show");
+
+    const minDelay = new Promise((resolve) => setTimeout(resolve, 1200));
+    const lookupPromise = supabaseClient.rpc("get_order_by_reference", { p_reference_code: code });
+    const [{ data, error }] = await Promise.all([lookupPromise, minDelay]);
+
+    loader.classList.remove("show");
+    lookupBtn.disabled = false;
+
+    if (error || !data || data.length === 0) {
+      lookupBanner.textContent = "We couldn't find an order with that reference code.";
+      lookupBanner.className = "banner show banner-error";
+      return;
+    }
+
+    const order = data[0];
+    window.location.href = `/services/${slugify(order.service_name)}/${order.reference_code}`;
   });
 </script>
 

@@ -3,6 +3,7 @@
   "rewrites": [
     { "source": "/", "destination": "/index.html" },
     { "source": "/services", "destination": "/services.html" },
+    { "source": "/services/:service/:code", "destination": "/service-order.html" },
     { "source": "/influenzar", "destination": "/influenzar.html" }
   ]
 }

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Order - Best Pen Agency</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;text-decoration:none;list-style:none;}
+  p{text-align:justify;text-justify:inter-word;}
+  body{font-family:'Host Grotesk',sans-serif;letter-spacing:-0.02em;background:#f8fafc;color:#0f172a;min-height:100vh;display:flex;flex-direction:column;animation:pageFadeIn .6s ease both;}
+  @keyframes pageFadeIn{from{opacity:0;}to{opacity:1;}}
+  :root{--primary:#0f5cff;--text-muted:#64748b;--line:#E7E9F3;--shadow:0 20px 40px rgba(0,0,0,0.06);}
+  a{text-decoration:none !important;}
+  .container{width:90%;max-width:640px;margin:0 auto;flex:1;display:flex;align-items:center;justify-content:center;padding:40px 0;}
+  .logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:800;color:#fff;}
+  .logo-circle{width:40px;height:40px;border-radius:50%;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .logo-circle img{width:120%;height:120%;object-fit:cover;}
+  header{background:#020617;padding:20px 0;}
+  header .container{padding:0;justify-content:flex-start;align-items:center;}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:40px;box-shadow:var(--shadow);width:100%;text-align:center;}
+  .state-icon{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 22px;}
+  .state-icon.ok{background:#E6F7EE;color:#16A260;}
+  .state-icon.bad{background:#FDEEEC;color:#B3352B;}
+  .state-icon.loading{background:#EEF1FF;color:var(--primary);}
+  h1{font-size:22px;margin-bottom:10px;}
+  .sub{color:var(--text-muted);font-size:14.5px;line-height:1.7;margin-bottom:26px;text-align:center;}
+
+  .detail-row{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line);font-size:14.5px;text-align:left;}
+  .detail-row:last-child{border-bottom:none;}
+  .detail-row .label{color:var(--text-muted);}
+  .detail-row .value{font-weight:600;}
+
+  .ref-code-box{
+    background:#EEF1FF;border-radius:12px;padding:14px;margin:22px 0;
+    font-family:monospace;font-size:16px;font-weight:700;letter-spacing:2px;color:var(--primary);
+  }
+
+  .placeholder-note{
+    margin-top:26px;padding:18px;background:#FAFBFF;border:1px dashed var(--line);
+    border-radius:12px;font-size:13.5px;color:var(--text-muted);text-align:center;
+  }
+
+  .btn-primary{background:var(--primary);color:#fff;padding:13px 26px;border-radius:10px;font-weight:600;font-size:14.5px;display:inline-flex;align-items:center;gap:8px;margin-top:24px;}
+
+  .spinner{width:36px;height:36px;border-radius:50%;border:3px solid #E7E9F3;border-top-color:var(--primary);animation:spin .8s linear infinite;margin:0 auto 22px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/" class="logo"><div class="logo-circle"><img src="/images/logo.png" alt="Best Pen Agency"></div>Best Pen Agency</a>
+  </div>
+</header>
+
+<div class="container">
+  <div class="card" id="loading-card">
+    <div class="spinner"></div>
+    <h1>Looking up your order...</h1>
+    <p class="sub">One moment.</p>
+  </div>
+
+  <div class="card" id="found-card" style="display:none;">
+    <div class="state-icon ok">✓</div>
+    <h1>Order confirmed</h1>
+    <p class="sub">Here's what we have on file for this order.</p>
+
+    <div class="ref-code-box" id="detail-ref"></div>
+
+    <div class="detail-row"><span class="label">Service</span><span class="value" id="detail-service"></span></div>
+    <div class="detail-row"><span class="label">Requested by</span><span class="value" id="detail-name"></span></div>
+    <div class="detail-row"><span class="label">Status</span><span class="value" id="detail-status"></span></div>
+
+    <div class="placeholder-note">
+      This is where you'll fill in the specific details and choices for this service, with pricing set once our team has talked through what you need. That part's coming soon.
+    </div>
+  </div>
+
+  <div class="card" id="not-found-card" style="display:none;">
+    <div class="state-icon bad">✕</div>
+    <h1>We couldn't find that order</h1>
+    <p class="sub">Double-check the link, or the reference code you entered — it may have a typo.</p>
+    <a href="/services" class="btn-primary">Back to Services →</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/js/supabase-client.js"></script>
+<script>
+  function slugify(str) {
+    return str.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  }
+
+  (async () => {
+    // URL looks like /services/{service-slug}/{reference-code}
+    const parts = window.location.pathname.split("/").filter(Boolean);
+    const serviceSlugFromUrl = parts[1];
+    const referenceCode = parts[2];
+
+    const showNotFound = () => {
+      document.getElementById("loading-card").style.display = "none";
+      document.getElementById("not-found-card").style.display = "block";
+    };
+
+    if (!referenceCode) {
+      showNotFound();
+      return;
+    }
+
+    const minDelay = new Promise((resolve) => setTimeout(resolve, 1200));
+    const lookupPromise = supabaseClient.rpc("get_order_by_reference", {
+      p_reference_code: referenceCode,
+    });
+
+    const [{ data, error }] = await Promise.all([lookupPromise, minDelay]);
+
+    if (error || !data || data.length === 0) {
+      showNotFound();
+      return;
+    }
+
+    const order = data[0];
+
+    // Confirm the service in the URL actually matches this order's service —
+    // guards against someone hand-editing the URL to mismatch service/code.
+    if (serviceSlugFromUrl !== slugify(order.service_name)) {
+      showNotFound();
+      return;
+    }
+
+    document.getElementById("loading-card").style.display = "none";
+    document.getElementById("detail-ref").textContent = order.reference_code;
+    document.getElementById("detail-service").textContent = order.service_name;
+    document.getElementById("detail-name").textContent = order.customer_name;
+    document.getElementById("detail-status").textContent =
+      order.status.charAt(0).toUpperCase() + order.status.slice(1).replace("_", " ");
+    document.getElementById("found-card").style.display = "block";
+  })();
+</script>
+
+</body>
+</html>
