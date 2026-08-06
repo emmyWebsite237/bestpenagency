@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Services - Best Pen Agency</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;text-decoration:none;list-style:none;scroll-behavior:smooth;}
+  p{text-align:justify;text-justify:inter-word;}
+  body{font-family:'Host Grotesk',sans-serif;letter-spacing:-0.02em;background:#f8fafc;overflow-x:hidden;color:#0f172a;animation:pageFadeIn .6s ease both;}
+  @keyframes pageFadeIn{from{opacity:0;}to{opacity:1;}}
+  :root{
+    --primary:#0f5cff;--primary-hover:#004be5;--dark:#020617;
+    --text-muted:#64748b;--text-light:#cbd5e1;--yellow:#facc15;
+    --border:rgba(255,255,255,0.08);--shadow:0 20px 40px rgba(0,0,0,0.06);
+    --line:#E7E9F3;
+  }
+  .container{width:90%;max-width:1240px;margin:auto;}
+  a{text-decoration:none !important;}
+  .btn-primary{background:var(--primary);color:#fff;padding:14px 28px;border-radius:10px;font-weight:600;font-size:15px;display:inline-flex;align-items:center;gap:10px;border:none;cursor:pointer;transition:transform .25s ease,box-shadow .25s ease,background .25s ease;font-family:inherit;}
+  .btn-primary:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 12px 30px rgba(15,92,255,0.35);background:var(--primary-hover);}
+  .btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+  .icon-placeholder{display:inline-flex;align-items:center;justify-content:center;background:rgba(15,92,255,0.1);color:var(--primary);border-radius:50%;flex-shrink:0;}
+
+  header{width:100%;background:radial-gradient(circle at 15% 20%, rgba(15,92,255,0.25) 0%, transparent 40%),radial-gradient(circle at 85% 70%, rgba(99,102,241,0.15) 0%, transparent 45%),linear-gradient(180deg, #020617 0%, #050d24 100%);}
+  .navbar{display:flex;align-items:center;justify-content:space-between;padding:24px 0;}
+  .logo{display:flex;align-items:center;gap:10px;color:#fff;font-size:25px;font-weight:800;}
+  .logo-circle{width:50px;height:50px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;background:white;flex-shrink:0;}
+  .logo-circle img{width:120%;height:120%;object-fit:cover;}
+  .nav-links{display:flex;gap:32px;}
+  .nav-links a{color:var(--text-light);font-size:14px;font-weight:500;}
+  .nav-links a:hover,.nav-links a.active{color:#fff;}
+  .page-hero{padding:56px 0 70px;text-align:center;}
+  .page-hero h1{font-size:44px;color:#fff;font-weight:800;margin-bottom:14px;}
+  .page-hero p{color:var(--text-light);font-size:15.5px;max-width:560px;margin:0 auto;}
+
+  .content-section{padding:70px 0;background:#fff;}
+  .service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:70px;}
+  .service-card{background:#fff;border:1px solid #f1f5f9;border-radius:16px;padding:28px 22px;cursor:pointer;transition:.2s;}
+  .service-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--primary);}
+  .service-card .icon-placeholder{width:50px;height:50px;margin-bottom:16px;font-size:19px;}
+  .service-card h3{font-size:17px;margin-bottom:8px;}
+  .service-card p{color:var(--text-muted);font-size:13.5px;line-height:1.6;}
+
+  .request-wrap{max-width:560px;margin:0 auto;}
+  .request-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:36px;box-shadow:var(--shadow);}
+  .request-card h2{font-size:24px;margin-bottom:8px;}
+  .request-card .sub{color:var(--text-muted);font-size:14.5px;margin-bottom:28px;}
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-size:13.5px;font-weight:600;margin-bottom:7px;}
+  .field input,.field select,.field textarea{
+    width:100%;padding:13px 15px;border-radius:10px;border:1.5px solid var(--line);
+    font-size:14.5px;font-family:inherit;color:#0f172a;
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px rgba(15,92,255,0.1);}
+  .field textarea{resize:vertical;min-height:100px;}
+  .field .err-msg{font-size:12.5px;color:#E0483F;margin-top:6px;display:none;}
+  .field.error input,.field.error select,.field.error textarea{border-color:#E0483F;}
+  .field.error .err-msg{display:block;}
+  .banner{display:none;padding:12px 14px;border-radius:10px;font-size:13.5px;margin-bottom:20px;line-height:1.5;}
+  .banner.show{display:block;}
+  .banner-error{background:#FDEEEC;color:#B3352B;}
+  .banner-success{background:#E6F7EE;color:#16A260;}
+
+  .state-panel{text-align:center;}
+  .state-icon{width:64px;height:64px;border-radius:50%;background:#E6F7EE;color:#16A260;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 20px;}
+  .state-panel h2{font-size:22px;margin-bottom:10px;}
+  .state-panel p{color:var(--text-muted);font-size:14.5px;line-height:1.7;max-width:380px;margin:0 auto;text-align:center;}
+
+  .loader-overlay{position:fixed;inset:0;background:#020617;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;z-index:9999;opacity:0;pointer-events:none;transition:opacity .35s ease;}
+  .loader-overlay.show{opacity:1;pointer-events:all;}
+  .loader-ring{width:46px;height:46px;border-radius:50%;border:3px solid rgba(255,255,255,0.15);border-top-color:var(--primary);animation:spin .8s linear infinite;}
+  .loader-text{color:#fff;font-size:14px;font-weight:500;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  footer{background:#020617;padding:50px 0 26px;border-top:1px solid var(--border);margin-top:0;}
+  .footer-bottom{text-align:center;color:var(--text-muted);font-size:13px;}
+
+  .mobile-menu-btn{display:none;background:none;border:none;color:#fff;font-size:22px;}
+  @media(max-width:992px){
+    .nav-links{display:none;}
+    .mobile-menu-btn{display:block;}
+    .service-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media(max-width:576px){
+    .page-hero h1{font-size:30px;}
+    .service-grid{grid-template-columns:1fr;}
+    .request-card{padding:26px 20px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <nav class="navbar">
+      <a href="/" class="logo"><div class="logo-circle"><img src="images/logo.png" alt="Best Pen Agency"></div>Best Pen Agency</a>
+      <ul class="nav-links"><li><a href="/services" class="active">Services</a></li></ul>
+      <button class="mobile-menu-btn"><i class="fa-solid fa-bars"></i></button>
+    </nav>
+    <div class="page-hero">
+      <h1>Our Services</h1>
+      <p>Pick what you need below, or scroll straight to the request form — no account required.</p>
+    </div>
+  </div>
+</header>
+
+<section class="content-section">
+  <div class="container">
+    <div class="service-grid">
+      <div class="service-card" data-service="Website Development"><span class="icon-placeholder"><i class="fa-solid fa-globe"></i></span><h3>Website Development</h3><p>Professional sites built to load fast and convert.</p></div>
+      <div class="service-card" data-service="Graphic Design"><span class="icon-placeholder"><i class="fa-solid fa-palette"></i></span><h3>Graphic Design</h3><p>Logos, brand identities, and visuals that mean business.</p></div>
+      <div class="service-card" data-service="Video Editing"><span class="icon-placeholder"><i class="fa-solid fa-video"></i></span><h3>Video Editing</h3><p>Reels, brand films, and promos that get watched.</p></div>
+      <div class="service-card" data-service="Social Media Management"><span class="icon-placeholder"><i class="fa-solid fa-mobile-screen"></i></span><h3>Social Media Management</h3><p>Consistent, strategic content that grows real audiences.</p></div>
+      <div class="service-card" data-service="Copywriting"><span class="icon-placeholder"><i class="fa-solid fa-pen-nib"></i></span><h3>Copywriting</h3><p>Words that sell, for every stage of the funnel.</p></div>
+      <div class="service-card" data-service="Email Marketing"><span class="icon-placeholder"><i class="fa-solid fa-envelope"></i></span><h3>Email Marketing</h3><p>Automated sequences and campaigns that drive revenue.</p></div>
+    </div>
+
+    <div class="request-wrap" id="request-form-section">
+      <div class="request-card">
+        <div id="form-view">
+          <h2>Request a Service</h2>
+          <p class="sub">Tell us what you need — we'll follow up by email or phone.</p>
+
+          <div id="banner" class="banner"></div>
+
+          <form id="request-form" novalidate>
+            <div class="field" id="field-name">
+              <label for="req-name">Full name</label>
+              <input type="text" id="req-name" placeholder="Your name" required>
+              <div class="err-msg">Please enter your name.</div>
+            </div>
+            <div class="field" id="field-email">
+              <label for="req-email">Email address</label>
+              <input type="email" id="req-email" placeholder="you@example.com" required>
+              <div class="err-msg">Please enter a valid email address.</div>
+            </div>
+            <div class="field">
+              <label for="req-phone">Phone number <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+              <input type="tel" id="req-phone" placeholder="e.g. 0801 234 5678">
+            </div>
+            <div class="field" id="field-service">
+              <label for="req-service">Service needed</label>
+              <select id="req-service" required>
+                <option value="">Select a service</option>
+                <option value="Website Development">Website Development</option>
+                <option value="Graphic Design">Graphic Design</option>
+                <option value="Video Editing">Video Editing</option>
+                <option value="Social Media Management">Social Media Management</option>
+                <option value="Copywriting">Copywriting</option>
+                <option value="Email Marketing">Email Marketing</option>
+              </select>
+              <div class="err-msg">Please choose a service.</div>
+            </div>
+            <div class="field">
+              <label for="req-details">Details <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+              <textarea id="req-details" placeholder="Anything that helps us understand what you need"></textarea>
+            </div>
+            <button type="submit" class="btn-primary" id="submit-btn" style="width:100%;justify-content:center;">Send Request →</button>
+          </form>
+        </div>
+
+        <div id="success-view" class="state-panel" style="display:none;">
+          <div class="state-icon">✓</div>
+          <h2>Request received</h2>
+          <p>Thanks — we've got your request for <b id="success-service"></b>. We'll reach out to <b id="success-email"></b> shortly.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-bottom">© 2026 Best Pen Agency. All Rights Reserved.</div>
+  </div>
+</footer>
+
+<div class="loader-overlay" id="loader-overlay">
+  <div class="loader-ring"></div>
+  <div class="loader-text">Sending your request...</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/referral-tracker.js"></script>
+<script>
+  // Prefill from ?service=... (e.g. arriving from a homepage service card)
+  const params = new URLSearchParams(window.location.search);
+  const preselect = params.get("service");
+  if (preselect) {
+    const select = document.getElementById("req-service");
+    if ([...select.options].some(o => o.value === preselect)) {
+      select.value = preselect;
+    }
+  }
+
+  // Clicking a service card scrolls to the form and preselects it.
+  document.querySelectorAll(".service-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      document.getElementById("req-service").value = card.getAttribute("data-service");
+      document.getElementById("request-form-section").scrollIntoView({ behavior: "smooth" });
+    });
+  });
+
+  const form = document.getElementById("request-form");
+  const banner = document.getElementById("banner");
+  const submitBtn = document.getElementById("submit-btn");
+  const loader = document.getElementById("loader-overlay");
+
+  function clearErrors() {
+    ["name", "email", "service"].forEach((id) => {
+      document.getElementById(`field-${id}`).classList.remove("error");
+    });
+    banner.className = "banner";
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    clearErrors();
+
+    const name = document.getElementById("req-name").value.trim();
+    const email = document.getElementById("req-email").value.trim();
+    const phone = document.getElementById("req-phone").value.trim();
+    const service = document.getElementById("req-service").value;
+    const details = document.getElementById("req-details").value.trim();
+
+    let hasError = false;
+    if (!name) { document.getElementById("field-name").classList.add("error"); hasError = true; }
+    if (!email || !email.includes("@")) { document.getElementById("field-email").classList.add("error"); hasError = true; }
+    if (!service) { document.getElementById("field-service").classList.add("error"); hasError = true; }
+    if (hasError) return;
+
+    submitBtn.disabled = true;
+    loader.classList.add("show");
+
+    const deviceId = getOrCreateDeviceId();
+    const referralCode = getStoredReferralCode();
+
+    const minDelay = new Promise((resolve) => setTimeout(resolve, 2000));
+    const submitPromise = supabaseClient.from("service_orders").insert({
+      customer_name: name,
+      customer_email: email,
+      customer_phone: phone || null,
+      service_name: service,
+      details: details || null,
+      device_id: deviceId,
+      referral_code: referralCode || null,
+    });
+
+    const [{ error }] = await Promise.all([submitPromise, minDelay]);
+
+    loader.classList.remove("show");
+
+    if (error) {
+      submitBtn.disabled = false;
+      banner.textContent = "Something went wrong sending your request. Please try again.";
+      banner.className = "banner show banner-error";
+      return;
+    }
+
+    document.getElementById("form-view").style.display = "none";
+    document.getElementById("success-service").textContent = service;
+    document.getElementById("success-email").textContent = email;
+    document.getElementById("success-view").style.display = "block";
+  });
+</script>
+
+</body>
+</html>
